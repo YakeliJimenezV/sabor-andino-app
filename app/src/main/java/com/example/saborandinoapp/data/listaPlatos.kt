@@ -59,12 +59,12 @@ val listaPlatos = listOf(
     ),
 
     Plato(
-            7,
-    "Mazamorra Morada",
-    "Postre tradicional peruano",
-    9.0,
-    "Postres",
-    R.drawable.mazamorra
+        7,
+        "Mazamorra Morada",
+        "Postre tradicional peruano",
+        9.0,
+        "Postres",
+        R.drawable.mazamorra
     ),
 
     Plato(
@@ -74,5 +74,59 @@ val listaPlatos = listOf(
         6.0,
         "Bebidas",
         R.drawable.incakola
+    ),
+
+    Plato(
+        9,
+        "Caldo de Gallina",
+        "Sopa tradicional peruana con fideos y huevo",
+        18.0,
+        "Fondo",
+        R.drawable.caldogallina
+    ),
+
+    Plato(
+        10,
+        "Tallarines Verdes",
+        "Pasta con salsa de albahaca y queso",
+        20.0,
+        "Fondo",
+        R.drawable.tallarinesverdes
+    ),
+
+    Plato(
+        11,
+        "Arroz con Pollo",
+        "Arroz verde con pollo al cilantro",
+        22.0,
+        "Fondo",
+        R.drawable.arrozconpollo
+    ),
+
+    Plato(
+        12,
+        "Picarones",
+        "Buñuelos de camote con miel de chancaca",
+        10.0,
+        "Postres",
+        R.drawable.picarones
+    ),
+
+    Plato(
+        13,
+        "Keke de Vainilla",
+        "Bizcocho esponjoso de vainilla casero",
+        9.0,
+        "Postres",
+        R.drawable.kekevainilla
+    ),
+
+    Plato(
+        14,
+        "Limonada",
+        "Bebida refrescante de limón natural",
+        7.0,
+        "Bebidas",
+        R.drawable.limonada
     )
 )
