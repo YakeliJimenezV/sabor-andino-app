@@ -7,7 +7,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -18,16 +18,15 @@ import com.example.saborandinoapp.data.PedidoManager
 @Composable
 fun PedidoScreen(navController: NavHostController) {
 
-    //  Lista de productos agregados al carrito
     val pedido = PedidoManager.pedido
-
-    //  Total calculado del pedido
     val total = PedidoManager.total()
+
+    // 🔥 estados
+    var mostrarDialogoPago by remember { mutableStateOf(false) }
+    var pagoExitoso by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
-
-            //  Barra superior con botón regresar
             TopAppBar(
                 title = { Text("Mi Pedido") },
                 navigationIcon = {
@@ -48,14 +47,12 @@ fun PedidoScreen(navController: NavHostController) {
                 .padding(16.dp)
         ) {
 
-            //  SI EL CARRITO ESTÁ VACÍO
             if (pedido.isEmpty()) {
 
                 Text("Tu pedido está vacío 😢")
 
             } else {
 
-                //  LISTA DE PRODUCTOS DEL PEDIDO
                 LazyColumn(
                     modifier = Modifier.weight(1f)
                 ) {
@@ -68,11 +65,8 @@ fun PedidoScreen(navController: NavHostController) {
                                 .padding(8.dp)
                         ) {
 
-                            Row(
-                                modifier = Modifier.padding(12.dp)
-                            ) {
+                            Row(modifier = Modifier.padding(12.dp)) {
 
-                                //  IMAGEN DEL PLATO
                                 Image(
                                     painter = painterResource(id = plato.imagen),
                                     contentDescription = plato.nombre,
@@ -84,27 +78,8 @@ fun PedidoScreen(navController: NavHostController) {
                                 Column(
                                     modifier = Modifier.weight(1f)
                                 ) {
-
-                                    //  NOMBRE DEL PLATO
-                                    Text(
-                                        text = plato.nombre,
-                                        style = MaterialTheme.typography.titleMedium
-                                    )
-
-                                    //  PRECIO
+                                    Text(plato.nombre)
                                     Text("S/. ${plato.precio}")
-
-                                    Spacer(modifier = Modifier.height(6.dp))
-
-                                    //  BOTÓN ELIMINAR DEL PEDIDO
-                                    OutlinedButton(
-                                        onClick = {
-                                            // 🔹 Elimina el plato del carrito
-                                            PedidoManager.eliminar(plato)
-                                        }
-                                    ) {
-                                        Text("Eliminar")
-                                    }
                                 }
                             }
                         }
@@ -113,12 +88,64 @@ fun PedidoScreen(navController: NavHostController) {
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                //  TOTAL FINAL DEL PEDIDO
                 Text(
                     text = "Total: S/. $total",
                     style = MaterialTheme.typography.titleLarge
                 )
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Button(
+                    onClick = {
+                        mostrarDialogoPago = true
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Pagar pedido 💳")
+                }
             }
         }
+    }
+
+    // 💳 CONFIRMACIÓN DE PAGO
+    if (mostrarDialogoPago) {
+        AlertDialog(
+            onDismissRequest = { mostrarDialogoPago = false },
+            title = { Text("Confirmar pago") },
+            text = { Text("¿Deseas pagar S/. $total?") },
+            confirmButton = {
+                Button(onClick = {
+                    PedidoManager.pedido.clear()
+                    mostrarDialogoPago = false
+                    pagoExitoso = true
+                }) {
+                    Text("Sí, pagar")
+                }
+            },
+            dismissButton = {
+                OutlinedButton(onClick = {
+                    mostrarDialogoPago = false
+                }) {
+                    Text("Cancelar")
+                }
+            }
+        )
+    }
+
+    //  MENSAJE DE ÉXITO (SIN CRASH)
+    if (pagoExitoso) {
+        AlertDialog(
+            onDismissRequest = { pagoExitoso = false },
+            title = { Text("Pago exitoso ✔") },
+            text = { Text("Tu pedido fue pagado correctamente 🎉") },
+            confirmButton = {
+                Button(onClick = {
+                    pagoExitoso = false
+                    navController.popBackStack() //  esto evita crash
+                }) {
+                    Text("OK")
+                }
+            }
+        )
     }
 }
