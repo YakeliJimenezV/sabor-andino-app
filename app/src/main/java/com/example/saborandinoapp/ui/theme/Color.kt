@@ -2,6 +2,12 @@ package com.example.saborandinoapp.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
+val AzulMarino = Color(0xFF0D1B2A)
+val AzulMedio = Color(0xFF1B3A5C)
+val AzulClaro = Color(0xFF2E6DA4)
+val Blanco = Color(0xFFFFFFFF)
+val GrisClaro = Color(0xFFF2F4F7)
+
 val Purple80 = Color(0xFFD0BCFF)
 val PurpleGrey80 = Color(0xFFCCC2DC)
 val Pink80 = Color(0xFFEFB8C8)

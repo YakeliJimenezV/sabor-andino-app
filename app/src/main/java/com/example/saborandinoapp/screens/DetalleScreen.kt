@@ -1,141 +1,150 @@
 package com.example.saborandinoapp.screens
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.AddShoppingCart
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.saborandinoapp.data.listaPlatos
 import com.example.saborandinoapp.data.PedidoManager
+import com.example.saborandinoapp.data.listaPlatos
+import com.example.saborandinoapp.ui.theme.*
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetalleScreen(navController: NavHostController, id: Int) {
 
-    //  Busca el plato seleccionado según el ID recibido desde el menú
-    val plato = listaPlatos.find { it.id == id }
+    val plato = listaPlatos.find { it.id == id } ?: return
 
-    // Estado para manejar la cantidad seleccionada por el usuario
     var cantidad by remember { mutableStateOf(1) }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Detalle del Plato") },
-
-                //  Botón para regresar a la pantalla anterior
-                navigationIcon = {
-                    IconButton(onClick = {
-                        navController.popBackStack()
-                    }) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Volver"
-                        )
-                    }
-                }
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(GrisClaro)
+    ) {
+        Box {
+            Image(
+                painter = painterResource(id = plato.imagen),
+                contentDescription = plato.nombre,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(250.dp),
+                contentScale = ContentScale.Crop
             )
+            IconButton(
+                onClick = { navController.popBackStack() },
+                modifier = Modifier
+                    .padding(16.dp)
+                    .background(Color.Black.copy(alpha = 0.3f), CircleShape)
+            ) {
+                Icon(Icons.Default.ArrowBack, contentDescription = "Volver", tint = Blanco)
+            }
         }
-    ) { paddingValues ->
 
         Column(
             modifier = Modifier
+                .padding(24.dp)
                 .fillMaxSize()
-                .padding(paddingValues)
-                .padding(16.dp)
         ) {
-
-            if (plato != null) {
-
-                //  IMAGEN DEL PLATO
-                Image(
-                    painter = painterResource(id = plato.imagen),
-                    contentDescription = plato.nombre,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(220.dp)
-                )
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                //  NOMBRE DEL PLATO
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Text(
                     text = plato.nombre,
-                    style = MaterialTheme.typography.titleLarge
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = AzulMarino,
+                    modifier = Modifier.weight(1f)
                 )
 
-                Spacer(modifier = Modifier.height(10.dp))
-
-                //  DESCRIPCIÓN DEL PLATO
-                Text(plato.descripcion)
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                // PRECIO UNITARIO
                 Text(
-                    text = "Precio: S/. ${plato.precio}",
-                    style = MaterialTheme.typography.titleMedium
+                    text = "S/. ${plato.precio}",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = AzulClaro
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = plato.descripcion,
+                style = MaterialTheme.typography.bodyLarge,
+                color = AzulMedio.copy(alpha = 0.8f),
+                lineHeight = 24.sp
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            // Selector de cantidad con estilo mejorado
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                OutlinedIconButton(
+                    onClick = { if (cantidad > 1) cantidad-- },
+                    shape = RoundedCornerShape(12.dp),
+                    colors = IconButtonDefaults.outlinedIconButtonColors(contentColor = AzulMarino)
+                ) {
+                    Text("-", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                }
+
+                Text(
+                    text = cantidad.toString(),
+                    modifier = Modifier.padding(horizontal = 24.dp),
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = AzulMarino
                 )
 
-                Spacer(modifier = Modifier.height(20.dp))
-
-                //  SELECTOR DE CANTIDAD
-                // Permite aumentar o disminuir la cantidad del plato
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
+                OutlinedIconButton(
+                    onClick = { cantidad++ },
+                    shape = RoundedCornerShape(12.dp),
+                    colors = IconButtonDefaults.outlinedIconButtonColors(contentColor = AzulMarino)
                 ) {
-
-                    //  Botón disminuir cantidad
-                    Button(onClick = {
-                        if (cantidad > 1) cantidad--
-                    }) {
-                        Text("-")
-                    }
-
-                    //  Muestra la cantidad seleccionada
-                    Text(
-                        text = cantidad.toString(),
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        style = MaterialTheme.typography.titleLarge
-                    )
-
-                    //  Botón aumentar cantidad
-                    Button(onClick = {
-                        cantidad++
-                    }) {
-                        Text("+")
-                    }
+                    Text("+", fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 }
+            }
 
-                Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.weight(1f))
 
-                //  BOTÓN AGREGAR AL PEDIDO
-                Button(
-                    onClick = {
-
-                        //  Agrega el plato al carrito según la cantidad seleccionada
-                        repeat(cantidad) {
-                            PedidoManager.agregar(plato)
-                        }
-
-                        //  Navega a la pantalla de pedido
-                        navController.navigate("pedido")
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Agregar al pedido")
-                }
-
-            } else {
-                //  Si no se encuentra el plato
-                Text("Plato no encontrado")
+            Button(
+                onClick = {
+                    repeat(cantidad) {
+                        PedidoManager.agregar(plato)
+                    }
+                    navController.navigate("pedido")
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(60.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = AzulMarino),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Icon(Icons.Default.AddShoppingCart, contentDescription = null)
+                Spacer(modifier = Modifier.width(12.dp))
+                Text(
+                    "AGREGAR AL PEDIDO",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp,
+                    color = Blanco
+                )
             }
         }
     }
