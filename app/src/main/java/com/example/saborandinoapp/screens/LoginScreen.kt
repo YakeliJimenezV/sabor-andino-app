@@ -1,105 +1,129 @@
 package com.example.saborandinoapp.screens
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.saborandinoapp.R
 
 @Composable
 fun LoginScreen(navController: NavHostController) {
 
-    //  Estado del campo correo (guarda lo que el usuario escribe)
     var email by remember { mutableStateOf("") }
-
-    //  Estado del campo contraseña
     var password by remember { mutableStateOf("") }
-
-    //  Estado para mostrar mensajes de error en pantalla
     var error by remember { mutableStateOf("") }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-
-        //  Centra el contenido verticalmente
-        verticalArrangement = Arrangement.Center
+    Box(
+        modifier = Modifier.fillMaxSize()
     ) {
 
-        //  TÍTULO DE BIENVENIDA
-        Text(
-            "Bienvenido a Sabor Andino",
-            style = MaterialTheme.typography.titleLarge
+        // 🖼 IMAGEN DE FONDO
+        Image(
+            painter = painterResource(id = R.drawable.fondoscreen),
+            contentDescription = "Fondo",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize()
         )
 
-        Spacer(modifier = Modifier.height(20.dp))
-
-        //  CAMPO DE CORREO
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text("Correo") },
-            modifier = Modifier.fillMaxWidth()
+        // 🌑 CAPA OSCURA PARA MEJORAR VISIBILIDAD
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.5f))
         )
 
-        Spacer(modifier = Modifier.height(10.dp))
-
-        //  CAMPO DE CONTRASEÑA
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Contraseña") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        //  MENSAJE DE ERROR (si existe)
-        if (error.isNotEmpty()) {
-            Text(error, color = MaterialTheme.colorScheme.error)
-        }
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        //  BOTÓN DE INGRESO
-        Button(
-            onClick = {
-
-                //  VALIDACIONES BÁSICAS
-                when {
-
-                    //  Campos vacíos
-                    email.isBlank() || password.isBlank() -> {
-                        error = "Completa todos los campos"
-                    }
-
-                    //  Validación de correo
-                    !email.contains("@") -> {
-                        error = "Correo inválido"
-                    }
-
-                    //  Contraseña muy corta
-                    password.length < 4 -> {
-                        error = "Contraseña muy corta"
-                    }
-
-                    //  SI TODO ES CORRECTO
-                    else -> {
-                        error = ""
-
-                        //  Se obtiene el nombre desde el correo
-                        val usuario = email.substringBefore("@")
-
-                        //  Navegación enviando usuario y email al Home
-                        navController.navigate("home/$usuario/$email")
-                    }
-                }
-            },
-            modifier = Modifier.fillMaxWidth()
+        // 🧾 FORMULARIO
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(24.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("Ingresar")
+
+            Text(
+                "Bienvenido a Sabor Andino",
+                style = MaterialTheme.typography.titleLarge,
+                color = Color.White
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // EMAIL
+            OutlinedTextField(
+                value = email,
+                onValueChange = { email = it },
+                label = { Text("Correo") },
+                modifier = Modifier.fillMaxWidth(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White,
+                    focusedLabelColor = Color.White,
+                    unfocusedLabelColor = Color.LightGray,
+                    focusedBorderColor = Color.White,
+                    unfocusedBorderColor = Color.Gray
+                )
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            // PASSWORD
+            OutlinedTextField(
+                value = password,
+                onValueChange = { password = it },
+                label = { Text("Contraseña") },
+                modifier = Modifier.fillMaxWidth(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White,
+                    focusedLabelColor = Color.White,
+                    unfocusedLabelColor = Color.LightGray,
+                    focusedBorderColor = Color.White,
+                    unfocusedBorderColor = Color.Gray
+                )
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            if (error.isNotEmpty()) {
+                Text(error, color = Color.Red)
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Button(
+                onClick = {
+
+                    when {
+                        email.isBlank() || password.isBlank() -> {
+                            error = "Completa todos los campos"
+                        }
+                        !email.contains("@") -> {
+                            error = "Correo inválido"
+                        }
+                        password.length < 4 -> {
+                            error = "Contraseña muy corta"
+                        }
+                        else -> {
+                            error = ""
+                            val usuario = email.substringBefore("@")
+                            navController.navigate("home/$usuario/$email")
+                        }
+                    }
+
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Ingresar")
+            }
         }
     }
 }
